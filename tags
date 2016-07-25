@@ -1,0 +1,37 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+MODE_A	include/journal/journal.h	10;"	d
+MODE_R	include/journal/journal.h	6;"	d
+MODE_RPLUS	include/journal/journal.h	8;"	d
+MODE_W	include/journal/journal.h	7;"	d
+MODE_WPLUS	include/journal/journal.h	9;"	d
+__FS_BUILD_H_	include/fs/build.h	2;"	d
+__FS_INODE_H_	include/fs/inode.h	2;"	d
+__FS_TABLE_H_	include/fs/table.h	3;"	d
+__JOURNAL_JOURNAL_H_	include/journal/journal.h	2;"	d
+__UNBUFFERED_DIRECTORY_H_	include/unbuffered/directory.h	2;"	d
+__UNBUFFERED_FS_H_	include/unbuffered/fs.h	2;"	d
+buffer_end	include/journal/journal.h	/^		 buffer_end;$/;"	m	struct:buffer_info
+buffer_info	include/journal/journal.h	/^struct buffer_info$/;"	s
+buffer_start	include/journal/journal.h	/^	offset_t buffer_start,$/;"	m	struct:buffer_info
+dbuffer_cursor	include/journal/journal.h	/^		 dbuffer_cursor,$/;"	m	struct:journal_entry
+dbuffer_eof	include/journal/journal.h	/^		 dbuffer_eof,$/;"	m	struct:journal_entry
+dbuffer_eos	include/journal/journal.h	/^		 dbuffer_eos;$/;"	m	struct:journal_entry
+dbuffer_start	include/journal/journal.h	/^	offset_t dbuffer_start,$/;"	m	struct:journal_entry
+entry	include/journal/journal.h	/^	struct journal_entry * entry;$/;"	m	struct:journal_entry_holder	typeref:struct:journal_entry_holder::journal_entry
+in_journal	include/journal/journal.h	/^	char in_journal:1; \/\/ bool$/;"	m	struct:journal_entry
+in_journal	include/journal/journal.h	/^	char in_journal:1;$/;"	m	struct:buffer_info
+inode_descriptor	include/journal/journal.h	/^	offset_t inode_descriptor;$/;"	m	struct:journal_entry
+journal_entry	include/journal/journal.h	/^struct journal_entry$/;"	s
+journal_entry_holder	include/journal/journal.h	/^struct journal_entry_holder$/;"	s
+max_buffer_size	include/journal/journal.h	/^	size_t max_buffer_size,$/;"	m	struct:buffer_info
+mode	include/journal/journal.h	/^	char mode; \/\/ open for r\/w$/;"	m	struct:journal_entry
+next	include/journal/journal.h	/^	struct journal_entry_holder * next;$/;"	m	struct:journal_entry_holder	typeref:struct:journal_entry_holder::journal_entry_holder
+rbuffer	include/journal/journal.h	/^	fs_word * rbuffer;$/;"	m	struct:journal_entry
+rbuffer_cursor	include/journal/journal.h	/^	fs_word * rbuffer_cursor;$/;"	m	struct:journal_entry
+rbuffer_end	include/journal/journal.h	/^	fs_word * rbuffer_end;$/;"	m	struct:journal_entry
+requested_buffer_size	include/journal/journal.h	/^	       requested_buffer_size;$/;"	m	struct:buffer_info
