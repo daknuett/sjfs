@@ -355,7 +355,7 @@ void unregister_entry(struct journal_entry_holder * root, struct journal_entry *
 	{
 		return;
 	}
-	struct journal_entry_holder * last = root, * current = root;
+	struct journal_entry_holder * last = root, * current = root->next;
 	
 	do
 	{
