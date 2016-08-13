@@ -1,10 +1,14 @@
 #include<stdio.h>
+#include<string.h>
 #include<stdint.h>
 #include<stdlib.h>
+#include<errno.h>
 
 #define FILE_MODE
 #ifdef FILE_MODE
 char * fname = "fs_test.img";
+char * file_buffer = NULL;
+#define IMG_SIZE 1024 * 1024 * 1400
 #endif
 
 
@@ -24,18 +28,24 @@ size_t __write_buffer(offset_t start, size_t bufs, fs_word ** buffer);
 size_t __read_allocated_buffer(offset_t start, size_t bufs, fs_word ** buffer)
 {
 #ifdef FILE_MODE
-	FILE * f = fopen(fname, "r");
-	fseek(f, (long int) start, SEEK_SET);
-	size_t read = 0;
-	fs_word _c = fgetc(f);
-	fs_word * b = * buffer;
-	while(_c != EOF && read < bufs)
+	if(file_buffer == NULL)
 	{
-		b[read++] = _c;
-		_c = fgetc(f);
+		file_buffer = malloc(sizeof(char) *IMG_SIZE);
+
+		FILE * f = fopen(fname, "r");
+		fread(file_buffer, 1,IMG_SIZE, f);
+		printf("errno: %d\n", errno);
+		fclose(f);
 	}
-	fclose(f);
-	return read;
+	size_t end = bufs + start;
+	if(end >IMG_SIZE)
+	{
+		end =IMG_SIZE;
+	}
+	end -= start;
+	printf("[__read]{req %zu}{avail %zu}\n", bufs, end);
+	memcpy(*buffer, file_buffer + start, end);
+	return end;
 #endif
 	// other modes maybe later...
 }
@@ -53,12 +63,28 @@ size_t __read_unallocated_buffer(offset_t start, size_t bufs, fs_word ** unalloc
 size_t __write_buffer(offset_t start, size_t bufs, fs_word ** buffer)
 {
 #ifdef FILE_MODE
-	FILE * f = fopen(fname, "r+");
-	fseek(f, (long int) start, SEEK_SET);
+	if(file_buffer == NULL)
+	{
+		file_buffer = malloc(sizeof(char) *IMG_SIZE);
+
+		FILE * f = fopen(fname, "r");
+		fread(file_buffer, 1,IMG_SIZE, f);
+		printf("errno: %d\n", errno);
+		fclose(f);
+	}
+	size_t end = bufs + start;
+	if(end >IMG_SIZE)
+	{
+		end =IMG_SIZE;
+	}
+	end -= start;
+	printf("[__write]{req %zu}{avail %zu}\n", bufs, end);
+	memcpy(file_buffer + start, *buffer, end);
 	// take a look at man fwrite
-	size_t written = fwrite(*buffer, sizeof(fs_word), bufs, f) * sizeof(fs_word);
+	FILE * f = fopen(fname, "w");
+	size_t written = fwrite(file_buffer, sizeof(fs_word),IMG_SIZE, f) * sizeof(fs_word);
 	fclose(f);
-	return written;
+	return end;
 #endif
 
 }

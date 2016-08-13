@@ -3,11 +3,21 @@
 #include<fs/inode.h>
 #include<unbuffered/fs.h>
 
-#define MODE_R 1
-#define MODE_W 2
-#define MODE_RPLUS 3
-#define MODE_WPLUS 4
-#define MODE_A 5
+#define WEN		0b0010
+#define	REN		0b0001
+#define TRUNCATE	0b0100
+#define	CURSOR_END	0b1000
+#define MODE_R 		0b0001
+#define MODE_W 		0b0110
+#define MODE_RPLUS	0b0011
+#define MODE_WPLUS	0b0111
+#define MODE_A 		0b1110
+/*			  ^^^^
+      cursor_set to end --||||
+      trunctate file    ---|||
+      write enable      ----||
+      read enable       -----|
+	*/
 
 struct journal_entry
 {
@@ -281,7 +291,7 @@ struct journal_entry * buffer_file(struct sjfs_table * table, struct file * fil,
 {
 	struct buffer_info * buff = malloc(sizeof(struct buffer_info));
 	char buffer_not_ok;
-	if(mode == MODE_W || mode == MODE_WPLUS)
+	if(mode & TRUNCATE)
 	{
 		buffer_not_ok = get_journal_buffer(table, additional_buffer, &buff);
 	}
@@ -316,7 +326,7 @@ exit_nospace:
 	entry->in_journal = buff->in_journal;
 	entry->inode_descriptor = get_inode_descriptor_offset_by_name(table, fil->name);
 
-	if(mode != MODE_W && mode != MODE_WPLUS)
+	if(!(mode & TRUNCATE))
 	{
 		// copy content
 		size_t left = fil->size,
@@ -339,7 +349,7 @@ exit_nospace:
 			entry->dbuffer_cursor += chunk_size;
 
 		}
-		if(mode == MODE_R || MODE_RPLUS)
+		if(!( mode & CURSOR_END))
 		{
 			entry->dbuffer_cursor =  entry->dbuffer_start;
 		}
@@ -351,8 +361,10 @@ exit_nospace:
 
 void unregister_entry(struct journal_entry_holder * root, struct journal_entry * entry)
 {
+	free(entry->rbuffer);
 	if(!entry->in_journal)
 	{
+		free(entry);
 		return;
 	}
 	struct journal_entry_holder * last = root, * current = root->next;
@@ -375,6 +387,14 @@ void unregister_entry(struct journal_entry_holder * root, struct journal_entry *
 
 char unbuffer_entry(struct sjfs_table * table, struct journal_entry * entry)
 {
+	// actually a pseudo entry.
+	// no action will be performed
+	if(!entry->mode & WEN)
+	{
+		free(entry->rbuffer);
+		free(entry);
+		return 0;
+	}
 	// we are in filespace. no need to copy.
 	// just forget the old allocated space
 	if(!entry->in_journal)
@@ -412,7 +432,6 @@ char unbuffer_entry(struct sjfs_table * table, struct journal_entry * entry)
 		}
 		dir->pointer = free_space;
 		write_buffer(descriptor->pointer, sizeof(struct dummy_inode),(fs_word **) &dir);
-
 
 		// copy the content
 

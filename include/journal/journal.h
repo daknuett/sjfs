@@ -2,12 +2,22 @@
 #define __JOURNAL_JOURNAL_H_
 
 #include<io.h>
+#define WEN		0b0010
+#define	REN		0b0001
+#define TRUNCATE	0b0100
+#define	CURSOR_END	0b1000
+#define MODE_R 		0b0001
+#define MODE_W 		0b0110
+#define MODE_RPLUS	0b0011
+#define MODE_WPLUS	0b0111
+#define MODE_A 		0b1110
+/*			  ^^^^
+      cursor_set to end --||||
+      trunctate file    ---|||
+      write enable      ----||
+      read enable       -----|
+	*/
 
-#define MODE_R 1
-#define MODE_W 2
-#define MODE_RPLUS 3
-#define MODE_WPLUS 4
-#define MODE_A 5
 
 struct journal_entry
 {
